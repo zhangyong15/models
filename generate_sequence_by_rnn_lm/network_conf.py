@@ -1,6 +1,10 @@
 # coding=utf-8
+import sys
 
 import paddle.v2 as paddle
+from paddle.v2.layer import parse_network
+from paddle.trainer.config_parser import parse_config
+from paddle.proto import TrainerConfig_pb2
 
 
 def rnn_lm(vocab_dim,
@@ -60,3 +64,15 @@ def rnn_lm(vocab_dim,
         cost = paddle.layer.classification_cost(input=output, label=target)
 
         return cost, output
+
+
+if __name__ == "__main__":
+    cost, _ = rnn_lm(
+        vocab_dim=1000,
+        emb_dim=128,
+        hidden_size=128,
+        stacked_rnn_num=3,
+        rnn_type="lstm", )
+    conf = parse_network(cost)
+
+    sys.stdout.write(conf.SerializeToString())
